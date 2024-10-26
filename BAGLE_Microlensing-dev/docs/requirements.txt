@@ -1,0 +1,15 @@
+matplotlib
+numpy
+numpydoc
+sphinxcontrib.video
+astropy
+celerite
+ephem
+joblib
+jplephem
+graphviz 
+pymultinest
+dynesty
+pytest
+mpi4py
+sphinx_rtd_theme

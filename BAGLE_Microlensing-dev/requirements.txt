@@ -1,0 +1,12 @@
+matplotlib
+numpy
+scipy
+astropy
+pytest
+celerite
+ephem
+pymultinest
+Pyerfa
+dynesty
+joblib
+jplephem
