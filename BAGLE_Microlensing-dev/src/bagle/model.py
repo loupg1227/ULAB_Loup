@@ -8655,7 +8655,8 @@ class PSBL_PhotAstrom_CircOrbs_Param4(PSBL_PhotAstrom_EllOrbs_Param4):
     tE : float
         Einstein crossing time (days).
     thetaE : float
-        The size of the Einstein radius in (mas).
+        The size of the Einstein radius in (mas). 
+        Einstein radius is the ANGULAR SEPARATION (IN MAS) BETWEEN THE SOURCE AND ITS IMAGE CREATED BY THE LENS.
     piS : float
         Amplitude of the parallax (1AU/dS) of the source. (mas)
     piE_E : float
