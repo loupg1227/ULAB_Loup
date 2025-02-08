@@ -6369,8 +6369,27 @@ class PSBL_PhotAstrom(PSBL, PSPL_PhotAstrom):
                 orb.e = self.e
                 orb.p = self.p
                 orb.tp = self.tp
-                orb.aleph = self.aleph *1e-3 #arcseconds
-                orb.aleph2 = self.aleph_sec*1e-3 #arcseconds
+
+
+                if self.specialFlag:
+
+                    changing_a = self.a + (self.da_dt * dt_in_years)
+                    changing_mass_of_donor = self.mLp + (self.md_dt * dt_in_years)
+                    changing_mass_of_accretor = self.mLs + (self.ma_dt * dt_in_years)
+                    changing_aleph_sec = changing_mass_of_donor / (changing_mass_of_donor + changing_mass_of_accretor) * changing_a
+                    changing_aleph = changing_a - changing_aleph_sec
+                    orb.aleph = changing_aleph *1e-3 #arcseconds
+                    orb.aleph2 = changing_aleph_sec *1e-3 #arcseconds
+
+                    
+                    new_p = self.p + (self.mp_dt * dt_in_years)
+                    orb.p = new_p
+                else:
+                    orb.p = self.p
+
+                    orb.aleph = self.aleph * 1e-3 # arcsecond conversion
+                    orb.aleph2 = self.aleph_sec * 1e-3
+
 
                 (x, y, x2, y2) = orb.oal2xy(t_obs) #Motion of primary and secondary orbits. Returned quantities are in arcseconds.
 
@@ -6916,7 +6935,7 @@ class shrinking(PSPL_Param):
     paramAstromFlag = True
     paramPhotFlag = True
     orbitFlag = 'Keplerian'
-    specialFlag = False
+    specialFlag = True
 
     def __init__(self, mLp, mLs, t0_com, xS0_E, xS0_N,
                  beta_com, muL_E, muL_N, da_dt, omega, big_omega, i, e, tp, sep, arat, muS_E, muS_N, dL, dS,
@@ -6984,7 +7003,7 @@ class shrinking(PSPL_Param):
 
         self.md_dt = (mLp * da_dt) / (2 * self.a * ((mLp / mLs) - 1)) # Changing semi major axis
         self.mp_dt = (3 * p) * ((mLp / mLs) - 1) * (self.md_dt / mLp) # Changing mass of the donor mass
-        self.md_dt = -self.ma_dt
+        self.ma_dt = -self.md_dt
         
         
         # Calculate the Einstein radius
@@ -8872,7 +8891,7 @@ class PSBL_PhotAstrom_EllOrbs_Param4(PSBL_PhotAstromParam4):
 
 
 
-class binary_shrinking_orbit(PSBL_Param):
+class binary_shrinking_orbit(PSPL_Param):
     """
     Point source binary lens.
     It has 3 more parameters than PSPL (additional mass term, separation,
@@ -19302,6 +19321,27 @@ class PSBL_PhotAstrom_Par_Param1(ModelClassABC,
                                  PSBL_PhotAstrom,
                                  PSBL_Parallax,
                                  PSBL_PhotAstromParam1):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        startbases(self)
+        checkconflicts(self)
+
+class Shrek(ModelClassABC,
+                                   PSBL_PhotAstrom,
+                                   PSBL_noParallax,
+                                   shrinking):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        startbases(self)
+        checkconflicts(self)
+
+
+# PSBL_parallax
+@inheritdocstring
+class Shrek_Parallax(ModelClassABC,
+                                 PSBL_PhotAstrom,
+                                 PSBL_Parallax,
+                                 shrinking):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         startbases(self)
